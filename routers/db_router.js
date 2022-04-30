@@ -7,7 +7,12 @@ const db = require('../models/db.js');
 
 
 router.get('/', (req, res) => {
-    res.send(db.getTicket(211))
+	try{
+		    res.send(db.getTicket(211))
+	}
+	catch(error){
+		console.log(error)
+	}
 });
 
 router.get('/planes', (req, res) => {
