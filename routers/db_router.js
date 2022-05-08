@@ -18,7 +18,12 @@ router.get('/', (req, res) => {
 router.get('/planes', (req, res) => {
     res.send(db.getPlanes());
 });
-
+router.get('/flights', (req, res) => {
+    res.send(db.getFlights());
+});
+router.get('/users', (req, res) => {
+    res.send(db.getUsers());
+});
 router.get('/user', (req, res) => {
     res.send(db.getUser(`bb@gg.com`));
 });
