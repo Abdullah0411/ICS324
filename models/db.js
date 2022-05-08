@@ -6,9 +6,7 @@ class data {
     getTicket(TID) {
         return db.prepare(`SELECT * FROM Ticket WHERE TID == ?`).get(TID);
     }
-    getFlights() {
-        return db.prepare(`SELECT * FROM Flight`).all();
-    }
+
     getUser(email) {
         return db.prepare(`SELECT * FROM Account WHERE email == ?`).get(email);
     }
@@ -16,9 +14,7 @@ class data {
     getUser(email) {
         return db.prepare(`SELECT * FROM Account WHERE email == ?`).get(email);
     }
-    getUsers(){
-        return db.prepare(`SELECT * FROM Account`).all();
-    }
+
     getPlanes() {
         return db.prepare(`SELECT * FROM Plan`).all();
     }
@@ -33,6 +29,10 @@ class data {
         }
 
         return { message };
+    }
+
+    getFlight(flightID) {
+        return db.prepare(`SELECT * FROM Flight WHERE flightID = ?`).get(flightID)
     }
 
 
