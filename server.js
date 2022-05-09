@@ -17,10 +17,6 @@ const port = 8080;
 app.use('/', db_router)
 
 
-app.post('/', (req, res) => {
-
-})
-
 
 
 
