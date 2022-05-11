@@ -31,8 +31,9 @@ router.get('/users', (req, res) => {
 	res.send(db.getUsers());
 });
 // get user
-router.get('/user', (req, res) => {
-	res.send(db.getUser(`bb@gg.com`));
+router.get('/:email', (req, res) => {
+	let email = req.params.email
+	res.send(db.getUser(email));
 });
 // get admin
 router.get('/admin', (req, res) => {
@@ -40,17 +41,20 @@ router.get('/admin', (req, res) => {
 });
 // get flights based on email
 router.get('/userFlights/:email', (req, res) => {
-	console.log(db.getTickets(req.params.email));
-	const tickets = db.getTickets(req.params.email);
+	try {
+		const tickets = db.getTickets(req.params.email);
 
-	let flight = [];
-	for (ticket in tickets) {
-		flight[ticket] = db.getUserFlights(tickets[ticket].flightID)
+		let flight = [];
+		for (ticket in tickets) {
+			flight[ticket] = db.getUserFlights(tickets[ticket].flightID)
+		}
+
+
+		res.send(flight);
 	}
-	console.log(flight);
-
-
-	res.send(flight);
+	catch (e) {
+		console.log(e);
+	}
 });
 
 // add flight
@@ -75,6 +79,7 @@ router.post('/signup', async (req, res) => {
 		console.log(e);
 	}
 });
+
 // get flight
 router.get('/:flightID', (req, res) => {
 	let flightID = parseInt(req.params.flightID);
@@ -86,13 +91,39 @@ router.get('/:flightID', (req, res) => {
 	}
 })
 // add ticket
-router.post('/:flightID/addTicket', async (req, res) => {
-	let id = parseInt(req.params.flightID);
+router.post('/:email/:flightID/addTicket', async (req, res) => {
+	let flightID = parseInt(req.params.flightID);
+	let email = req.params.email;
 	try {
-		req.body['flightID'] = id
+		let date = new Date(Date.now());
+		date = `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`;
+		req.body['date'] = date;
+		req.body['flightID'] = flightID
 		req.body['status'] = 'pending'
+		req.body['email'] = email
 		const info = await db.addTicket(req.body)
 		res.redirect('/')
+	}
+	catch (e) {
+		console.log(e);
+	}
+});
+// edit ticket
+router.put('/:email/:TID/editTicket', async (req, res) => {
+	let TID = parseInt(req.params.TID);
+	let email = req.params.email;
+	try {
+		role = db.getUser(email).role
+		req.body['TID'] = TID
+		if (role == 'admin') {
+			const info = await db.editAdmin(req.body)
+			res.redirect('/')
+		}
+		else if (role == 'user') {
+			const info = await db.editUser(req.body)
+			res.redirect('/')
+		}
+
 	}
 	catch (e) {
 		console.log(e);

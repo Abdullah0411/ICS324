@@ -30,16 +30,17 @@ class data {
     getUsers() {
         return db.prepare(`SELECT * FROM Account`).all();
     }
+
     getPlanes() {
         return db.prepare(`SELECT * FROM Plane`).all();
     }
 
     addTicket(ticket) {
 
-        const result = db.prepare(`INSERT INTO Ticket (flightID, time, classType, seatNumber, status, email) VALUES (?,?,?,?,?,?,?)`).run(ticket.flightID, ticket.time, ticket.Class, ticket.seat, ticket.status, ticket.email);
+        const result = db.prepare(`INSERT INTO Ticket (flightID, time, classType, seatNumber, status, email) VALUES (?,?,?,?,?,?)`).run(ticket.flightID, ticket.date, ticket.Class, ticket.seat, ticket.status, ticket.email);
         let message = 'Error in creating ticket';
         if (result.changes) {
-            message = 'ticket created successfully';
+            message = 'Ticket created successfully';
         }
 
         return { message };
@@ -59,6 +60,24 @@ class data {
         let message = 'Error in creating flight';
         if (result.changes) {
             message = 'Flight created successfully';
+        }
+        return { message };
+    }
+
+    editAdmin(ticket) {
+        const result = db.prepare(`UPDATE Ticket SET status = ? WHERE TID = ?`).run(ticket.status, ticket.TID);
+        let message = 'Error in updating ticket';
+        if (result.changes) {
+            message = 'Ticket updated successfully';
+        }
+        return { message };
+    }
+
+    editUser(ticket) {
+        const result = db.prepare(`UPDATE Ticket SET seatNumber = ? WHERE TID = ?`).run(ticket.seatNumber, ticket.TID);
+        let message = 'Error in updating ticket';
+        if (result.changes) {
+            message = 'Ticket updated successfully';
         }
         return { message };
     }
