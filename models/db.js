@@ -37,7 +37,7 @@ class data {
 
     addTicket(ticket) {
 
-        const result = db.prepare(`INSERT INTO Ticket (flightID, time, classType, seatNumber, status, email) VALUES (?,?,?,?,?,?)`).run(ticket.flightID, ticket.date, ticket.Class, ticket.seat, ticket.status, ticket.email);
+        const result = db.prepare(`INSERT INTO Ticket (flightID, time, classType, seatNumber, status, email) VALUES (?,?,?,?,?,?)`).run(ticket.flightID, ticket.date, ticket.classType, ticket.seatNumber, ticket.status, ticket.email);
         let message = 'Error in creating ticket';
         if (result.changes) {
             message = 'Ticket created successfully';
@@ -78,6 +78,23 @@ class data {
         let message = 'Error in updating ticket';
         if (result.changes) {
             message = 'Ticket updated successfully';
+        }
+        return { message };
+    }
+
+    getCapacity(flightID) {
+        return db.prepare(`SELECT capacityForFlight FROM Flight WHERE flightID = ?`).get(flightID);
+    }
+
+    getnumberOfTickets(flightID) {
+        return db.prepare(`SELECT COUNT(TID) AS count FROM Ticket WHERE flightID = ? AND status = 'Confirmed'`).get(flightID);
+    }
+
+    addWaitlist(waitlist) {
+        const result = db.prepare(`INSERT INTO Waitlist (flightID, email) VALUES (?,?)`).run(waitlist.flightID, waitlist.email);
+        let message = 'Error in creating waitlist';
+        if (result.changes) {
+            message = 'Waitlist created successfully';
         }
         return { message };
     }

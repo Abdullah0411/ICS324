@@ -5,9 +5,10 @@ const path = require('path');
 const db = require('../models/db.js');
 
 
-router.get('/', (req, res) => {
+router.get('/ticket/:TID', (req, res) => {
+	let TID = parseInt(req.params.TID)
 	try {
-		res.send(db.getTicket(211))
+		res.send(db.getTicket(TID))
 	}
 	catch (error) {
 		console.log("error")
@@ -34,10 +35,6 @@ router.get('/users', (req, res) => {
 router.get('/:email', (req, res) => {
 	let email = req.params.email
 	res.send(db.getUser(email));
-});
-// get admin
-router.get('/admin', (req, res) => {
-	res.send(db.admin(`bb@gg.com`));
 });
 // get flights based on email
 router.get('/userFlights/:email', (req, res) => {
@@ -81,7 +78,7 @@ router.post('/signup', async (req, res) => {
 });
 
 // get flight
-router.get('/:flightID', (req, res) => {
+router.get('/flight/:flightID', (req, res) => {
 	let flightID = parseInt(req.params.flightID);
 	try {
 		res.send(db.getFlight(flightID))
@@ -95,14 +92,23 @@ router.post('/:email/:flightID/addTicket', async (req, res) => {
 	let flightID = parseInt(req.params.flightID);
 	let email = req.params.email;
 	try {
+		let capacity = parseInt(db.getCapacity(flightID).capacityForFlight)
+		let count = parseInt(db.getnumberOfTickets(flightID).count)
 		let date = new Date(Date.now());
 		date = `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`;
-		req.body['date'] = date;
 		req.body['flightID'] = flightID
-		req.body['status'] = 'pending'
+		req.body['date'] = date;
 		req.body['email'] = email
-		const info = await db.addTicket(req.body)
-		res.redirect('/')
+		if (count < capacity) {
+			req.body['status'] = 'Confirmed'
+			const info = await db.addTicket(req.body)
+			res.redirect('/')
+		}
+		else {
+			req.body['status'] = 'Waitlisted'
+			const info = await db.addTicket(req.body)
+			res.redirect('/')
+		}
 	}
 	catch (e) {
 		console.log(e);
