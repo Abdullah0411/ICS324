@@ -90,13 +90,9 @@ class data {
         return db.prepare(`SELECT COUNT(TID) AS count FROM Ticket WHERE flightID = ? AND status = 'Confirmed'`).get(flightID);
     }
 
-    addWaitlist(waitlist) {
-        const result = db.prepare(`INSERT INTO Waitlist (flightID, email) VALUES (?,?)`).run(waitlist.flightID, waitlist.email);
-        let message = 'Error in creating waitlist';
-        if (result.changes) {
-            message = 'Waitlist created successfully';
-        }
-        return { message };
+    getWaitlist(flightID) {
+        return db.prepare(`SELECT * FROM Ticket WHERE flightID = ? AND status = 'Waitlisted'`).all(flightID);
+
     }
 }
 

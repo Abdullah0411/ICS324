@@ -136,5 +136,15 @@ router.put('/:email/:TID/editTicket', async (req, res) => {
 	}
 });
 
+router.get('/:flightID/waitlist', (req, res) => {
+	let flightID = parseInt(req.params.flightID)
+	try {
+		res.send(db.getWaitlist(flightID))
+	}
+	catch (e) {
+		console.log(e);
+	}
+})
+
 
 module.exports = router;
